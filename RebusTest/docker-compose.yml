@@ -1,0 +1,26 @@
+﻿version: '3'
+
+services: 
+  rabbit:
+    image: rabbitmq:3.9-management
+    hostname: rabbit
+    ports:
+      - 15672:15672
+      - 5672:5672
+    volumes:
+      - rabbitmq:/var/lib/rabbitmq
+  db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    restart: always
+    ports:
+      - "1433:1433"
+    environment:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: Xsw2zaq1
+    volumes:
+      - type: volume
+        source: data
+        target: /var/opt/mssql
+volumes: 
+  rabbitmq:
+  data:
