@@ -20,8 +20,4 @@
       <PackageReference Include="Rebus.RabbitMq" Version="7.3.0" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Moq-AutoFixture" />
-    </ItemGroup>
-
 </Project>
