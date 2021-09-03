@@ -1,32 +1,29 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
+using Castle.Windsor;
 using McMaster.Extensions.CommandLineUtils;
+using OrderingSystemWithSagas.Installers;
+using Rebus.Activation;
+using Rebus.Config;
+using Shared;
 
 namespace OrderingSystemWithSagas
 {
-    interface ICommandable
-    {
-        void OnExecute(IConsole console);
-    }
     
-    [Command(Name = "Entry")]
     class Program
     {
-        public static int Main(string[] args) => CommandLineApplication.Execute<Program>(args);
+        public static async Task Main(string[] args)
+        {
 
-        private int OnExecute(CommandLineApplication app, IConsole console)
-        {
-            console.WriteLine("You must specify at a subcommand.");
-            app.ShowHelp();
-            return 1;
-        } 
-        
-        [Command("orders", "Manage Orders")]
-        private class Order
-        {
-            private void OnExecute(IConsole console)
+            using (var container = new WindsorContainer())
             {
-                Console.WriteLine("hello world");
+                container.Install(new RebusHandlersInstaller())
+                    .Install(new RebusInstaller())
+                    .Install(new SubscriptionsInstaller());
+                
+                Console.WriteLine("Press ENTER to quit");
+                Console.ReadLine();
             }
         }
     }
