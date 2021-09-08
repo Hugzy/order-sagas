@@ -7,11 +7,9 @@ using Shared.Events;
 
 namespace OrderingSystemWithSagas.Orders
 {
-    public class OrderSaga : Saga<OrderSagaData>
-        ,IAmInitiatedBy<OrderPlaced>,
-        IHandleMessages<OrderPayment>,
-        IHandleMessages<OrderReadyForExport>,
-        IHandleMessages<OrderFailed>
+    public class OrderSaga : Saga<OrderSagaData>,
+        IAmInitiatedBy<OrderPlaced>,
+        IHandleMessages<OrderPayment>
     {
         private IBus _bus { get; set; }
         
@@ -22,8 +20,8 @@ namespace OrderingSystemWithSagas.Orders
 
         protected override void CorrelateMessages(ICorrelationConfig<OrderSagaData> config)
         {
+            Console.WriteLine("test");
             config.Correlate<OrderPlaced>(m => m.OrderId, d => d.OrderId);
-            
             config.Correlate<OrderPayment>(m => m.OrderId, d => d.OrderId);
         }
 
@@ -42,7 +40,7 @@ namespace OrderingSystemWithSagas.Orders
 
         public async Task Handle(OrderPayment message)
         {
-            Data.ReceivedPayment = true;
+            Data.PaymentReceived = true;
 
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"Payed for order {message.OrderId}");
@@ -52,18 +50,20 @@ namespace OrderingSystemWithSagas.Orders
             
             MarkAsComplete();
         }
-
-        public async Task Handle(OrderReadyForExport message)
-        {
-            Data.IsReadyForExport = true;
-
-            await _bus.Publish(new OrderExported(Data.OrderId));
-            
-            MarkAsComplete();
-        }
-
-        public async Task Handle(OrderFailed message)
-        {
-        }
+    }
+    
+    public class OrderSagaData : ISagaData
+    {
+        public Guid Id { get; set; }
+        public int Revision { get; set; }
+        
+        public int OrderId { get; set; }
+        public bool PaymentReceived { get; set; }
+        public bool Failed { get; set; }
+        public string Cause { get; set; }
+        public bool WaitingForApproval { get; set; }
+        public bool ReadyToBeExported { get; set; }
+        public bool IsExported { get; set; }
+        
     }
 }

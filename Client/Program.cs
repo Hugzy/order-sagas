@@ -23,6 +23,8 @@ namespace Client
                 // DO Stuff
                 Console.WriteLine(order.OrderId);
             });
+            PrintHelp();
+            
             Console.WriteLine("Enter a command");
             var command = Console.ReadLine();
 
