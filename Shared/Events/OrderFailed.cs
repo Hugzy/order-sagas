@@ -1,8 +1,13 @@
 ﻿namespace Shared.Events
 {
-    public class OrderFailed
+    public class OrderFailed : IEventId
     {
-        public string IAmAnOrderFailedEvent => nameof(IAmAnOrderFailedEvent);
 
+        public int OrderId { get; set; }
+        public string IAmAnOrderFailedEvent => nameof(IAmAnOrderFailedEvent);
+        public OrderFailed(int orderId)
+        {
+            OrderId = orderId;
+        }
     }
 }

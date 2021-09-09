@@ -4,13 +4,15 @@ using Rebus.Bus;
 using Rebus.Handlers;
 using Rebus.Sagas;
 using Shared.Events;
+using Shared.Extensions;
 
 namespace OrderingSystemWithSagas.Orders
 {
     public class OrderSaga : Saga<OrderSagaData>,
-        IAmInitiatedBy<OrderPlaced>,
+        IAmInitiatedBy<PlaceOrderEvent>,
         IHandleMessages<OrderPayment>,
-        IHandleMessages<OrderReadyForExport>
+        IHandleMessages<OrderReadyForExport>,
+        IHandleMessages<OrderFailed>
     {
         private IBus _bus { get; set; }
         
@@ -21,16 +23,18 @@ namespace OrderingSystemWithSagas.Orders
 
         protected override void CorrelateMessages(ICorrelationConfig<OrderSagaData> config)
         {
-            config.Correlate<OrderPlaced>(m => m.OrderId, d => d.OrderId);
+            config.Correlate<PlaceOrderEvent>(m => m.OrderId, d => d.OrderId);
             config.Correlate<OrderPayment>(m => m.OrderId, d => d.OrderId);
             config.Correlate<OrderReadyForExport>(m => m.OrderId, d => d.OrderId);
+            
         }
 
-        public async Task Handle(OrderPlaced message)
+        public async Task Handle(PlaceOrderEvent message)
         {
             if (!IsNew) return;
 
             Data.OrderId = message.OrderId;
+            Data.StartDate = DateTimeOffset.Now;
             
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"Placing order with id {message.OrderId}");
@@ -60,14 +64,21 @@ namespace OrderingSystemWithSagas.Orders
             
             MarkAsComplete();
         }
+
+        public Task Handle(OrderFailed message)
+        {
+            throw new NotImplementedException();
+        }
     }
     
-    public class OrderSagaData : ISagaData
+    public class OrderSagaData : ISagaBase
     {
         public Guid Id { get; set; }
         public int Revision { get; set; }
         
         public int OrderId { get; set; }
+        public DateTimeOffset StartDate { get; set; }
+        public DateTimeOffset UpdatedAt { get; set; }
         public bool PaymentReceived { get; set; }
         public bool Failed { get; set; }
         public string Cause { get; set; }

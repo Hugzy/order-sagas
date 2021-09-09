@@ -14,7 +14,7 @@ namespace OrderingSystemWithSagas.Installers
         {
             var eventTypes = new[]
             {
-                typeof(OrderPlaced),
+                typeof(PlaceOrderEvent),
                 typeof(OrderCreated),
                 typeof(OrderPayment),
                 typeof(OrderReadyForExport),

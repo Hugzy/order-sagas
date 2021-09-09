@@ -28,7 +28,7 @@ namespace Logger
                     .Start();
 
 
-                await bus.Subscribe<OrderPlaced>();
+                await bus.Subscribe<PlaceOrderEvent>();
                 await bus.Subscribe<OrderCreated>();
                 await bus.Subscribe<OrderPayment>();
                 await bus.Subscribe<OrderFailed>();

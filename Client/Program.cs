@@ -18,7 +18,7 @@ namespace Client
                 .ConfigureEndpoint(EndpointRole.Client)
                 .Start();
 
-            activator.Handle<OrderPlaced>(async order =>
+            activator.Handle<PlaceOrderEvent>(async order =>
             {
                 // DO Stuff
                 Console.WriteLine(order.OrderId);
@@ -34,7 +34,7 @@ namespace Client
                 {
                     case "new" or "1":
                         var randInt = new Random().Next(1000);
-                        await bus.Publish(new OrderPlaced(randInt));
+                        await bus.Publish(new PlaceOrderEvent(randInt));
                         break;
                     case "pay" or "2":
                         Console.WriteLine("Please enter the OrderId you'd like to pay for");
@@ -48,13 +48,10 @@ namespace Client
                         await bus.Publish(new OrderPayment(orderIdint));
                         break;
                     case "fail" or "3":
-                        await bus.Publish(new OrderFailed());
                         break;
                     case "export" or "4":
-                        await bus.Publish(new OrderExported(0));
                         break;
                     case "exportready" or "rexport" or "5":
-                        await bus.Publish(new OrderReadyForExport(0));
                         break;
                     default:
                         PrintHelp();

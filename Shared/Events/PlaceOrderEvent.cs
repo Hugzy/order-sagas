@@ -1,11 +1,11 @@
 ﻿namespace Shared.Events
 {
-    public class OrderPlaced : IEventId
+    public class PlaceOrderEvent : IEventId
     {
 
         public int OrderId { get; set; }
         public string IAmAnOrderPlacedEvent => nameof(IAmAnOrderPlacedEvent);
-        public OrderPlaced(int orderId)
+        public PlaceOrderEvent(int orderId)
         {
             OrderId = orderId;
         }

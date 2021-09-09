@@ -5,9 +5,11 @@ namespace Shared
 {
     public static class Config
     {
-        public static string AppSetting(string key) => GetOrThrow<string>(key, ConfigurationManager.AppSettings[key], "appsetting");
+        public static string AppSetting(string key) =>
+            GetOrThrow<string>(key, ConfigurationManager.AppSettings[key], "appsetting");
 
-        public static string ConnectionString(string name) => GetOrThrow<string>(name, ConfigurationManager.ConnectionStrings[name]?.ConnectionString, "connection string");
+        public static string ConnectionString(string name) => GetOrThrow<string>(name,
+            ConfigurationManager.ConnectionStrings[name]?.ConnectionString, "connection string");
 
         static T GetOrThrow<T>(string name, string value, string what)
         {
@@ -22,7 +24,8 @@ namespace Shared
             }
             catch (Exception exception)
             {
-                throw new ConfigurationErrorsException($"Could not get '{value}' from {what} '{name}' as {typeof(T)}", exception);
+                throw new ConfigurationErrorsException($"Could not get '{value}' from {what} '{name}' as {typeof(T)}",
+                    exception);
             }
         }
     }
