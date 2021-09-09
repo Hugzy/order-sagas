@@ -11,7 +11,7 @@ namespace Logger
 
         public async Task Handle(IEventId message)
         {
-            Logger.Information("Got event {EventName} for case {CaseNumber}", message.GetType().Name, message.OrderId);
+            Logger.Information("Got event {EventName} for order {OrderId}", message.GetType().Name, message.OrderId);
 
         }
     }

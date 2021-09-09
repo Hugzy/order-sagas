@@ -3,7 +3,7 @@
     public class OrderExported : IEventId
     {
 
-        public int OrderId { get; }
+        public int OrderId { get; set; }
         public string IAmAnOrderExportedEvent => nameof(IAmAnOrderExportedEvent);
         public OrderExported(int id)
         {

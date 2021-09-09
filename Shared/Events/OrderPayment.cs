@@ -2,9 +2,8 @@
 {
     public class OrderPayment : IEventId
     {
-        public int OrderId { get; }
+        public int OrderId { get; set; }
         public string IAmAnOrderPaymentEvent => nameof(IAmAnOrderPaymentEvent);
-
 
         public OrderPayment(int id)
         {

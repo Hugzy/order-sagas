@@ -9,7 +9,8 @@ namespace OrderingSystemWithSagas.Orders
 {
     public class OrderSaga : Saga<OrderSagaData>,
         IAmInitiatedBy<OrderPlaced>,
-        IHandleMessages<OrderPayment>
+        IHandleMessages<OrderPayment>,
+        IHandleMessages<OrderReadyForExport>
     {
         private IBus _bus { get; set; }
         
@@ -20,9 +21,9 @@ namespace OrderingSystemWithSagas.Orders
 
         protected override void CorrelateMessages(ICorrelationConfig<OrderSagaData> config)
         {
-            Console.WriteLine("test");
             config.Correlate<OrderPlaced>(m => m.OrderId, d => d.OrderId);
             config.Correlate<OrderPayment>(m => m.OrderId, d => d.OrderId);
+            config.Correlate<OrderReadyForExport>(m => m.OrderId, d => d.OrderId);
         }
 
         public async Task Handle(OrderPlaced message)
@@ -30,7 +31,7 @@ namespace OrderingSystemWithSagas.Orders
             if (!IsNew) return;
 
             Data.OrderId = message.OrderId;
-
+            
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"Placing order with id {message.OrderId}");
             Console.ResetColor();
@@ -47,6 +48,15 @@ namespace OrderingSystemWithSagas.Orders
             Console.ResetColor();
             
             await _bus.Publish(new OrderReadyForExport(Data.OrderId));
+        }
+
+        public async Task Handle(OrderReadyForExport message)
+        {
+            Data.ReadyToBeExported = true;
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"Order is ready to be exported, sending order to ERP System {Data.OrderId}");
+            Console.ResetColor();
             
             MarkAsComplete();
         }

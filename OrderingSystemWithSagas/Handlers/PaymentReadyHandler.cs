@@ -21,7 +21,9 @@ namespace OrderingSystemWithSagas.Orders
             Console.WriteLine($"Paying order: {message.OrderId}");
             Console.ResetColor();
 
-            await _bus.Publish(new OrderPayment(message.OrderId));
+            var orderId = message.OrderId;
+            
+            await _bus.Publish(new OrderPayment(orderId));
         }
     }
 }

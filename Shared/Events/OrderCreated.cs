@@ -2,7 +2,7 @@
 {
     public class OrderCreated : IEventId
     {
-        public int OrderId { get; }
+        public int OrderId { get; set; }
 
         public OrderCreated(int orderId)
         {

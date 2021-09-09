@@ -2,6 +2,6 @@
 {
     public interface IEventId
     {
-        public int OrderId { get; }
+        public int OrderId { get; set;}
     }
 }

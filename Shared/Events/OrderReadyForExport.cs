@@ -4,7 +4,7 @@
     {
         public string IAmAnOrderReadyExportedEvent => nameof(IAmAnOrderReadyExportedEvent);
 
-        public int OrderId { get; }
+        public int OrderId { get; set; }
 
         public OrderReadyForExport(int orderId)
         {
