@@ -6,7 +6,7 @@ using Shared.Events;
 
 namespace OrderingSystemWithSagas.Orders
 {
-    public class PaymentReadyHandler : IHandleMessages<OrderCreated>
+    public class PaymentReadyHandler : IHandleMessages<OrderCreatedEvent>
     {
         private IBus _bus { get; set; }
 
@@ -15,7 +15,7 @@ namespace OrderingSystemWithSagas.Orders
             _bus = bus;
         }
         
-        public async Task Handle(OrderCreated message)
+        public async Task Handle(OrderCreatedEvent message)
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"Paying order: {message.OrderId}");
@@ -23,7 +23,7 @@ namespace OrderingSystemWithSagas.Orders
 
             var orderId = message.OrderId;
             
-            await _bus.Publish(new OrderPayment(orderId));
+            await _bus.Publish(new OrderPaymentEvent(orderId));
         }
     }
 }

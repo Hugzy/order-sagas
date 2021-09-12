@@ -29,11 +29,11 @@ namespace Logger
 
 
                 await bus.Subscribe<PlaceOrderEvent>();
-                await bus.Subscribe<OrderCreated>();
-                await bus.Subscribe<OrderPayment>();
-                await bus.Subscribe<OrderFailed>();
-                await bus.Subscribe<OrderReadyForExport>();
-                await bus.Subscribe<OrderExported>();
+                await bus.Subscribe<OrderCreatedEvent>();
+                await bus.Subscribe<OrderPaymentEvent>();
+                await bus.Subscribe<OrderFailedEvent>();
+                await bus.Subscribe<OrderReadyForExportEvent>();
+                await bus.Subscribe<OrderExportedEvent>();
 
                 Console.WriteLine("Press ENTER to quit");
                 Console.ReadLine();

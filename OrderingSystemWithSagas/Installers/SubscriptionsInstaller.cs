@@ -15,9 +15,12 @@ namespace OrderingSystemWithSagas.Installers
             var eventTypes = new[]
             {
                 typeof(PlaceOrderEvent),
-                typeof(OrderCreated),
-                typeof(OrderPayment),
-                typeof(OrderReadyForExport),
+                typeof(OrderCreatedEvent),
+                typeof(PayOrderEvent),
+                typeof(OrderPaymentEvent),
+                typeof(OrderFailedEvent),
+                typeof(OrderReadyForExportEvent),
+                typeof(OrderExportedEvent),
             };
 
             var bus = container.Resolve<IBus>();

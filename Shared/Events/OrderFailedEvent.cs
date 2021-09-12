@@ -1,9 +1,11 @@
 ﻿namespace Shared.Events
 {
-    public class PlaceOrderEvent : IEventBase
+    public class OrderFailedEvent : IEventBase
     {
+
         public override int OrderId { get; set; }
-        public PlaceOrderEvent(int orderId)
+
+        public OrderFailedEvent(int orderId)
         {
             OrderId = orderId;
         }
