@@ -45,7 +45,7 @@ namespace Client
                             Console.WriteLine("Please enter a valid orderid");
                             continue;
                         }
-                        await bus.Publish(new OrderPaymentEvent(orderIdint));
+                        await bus.Publish(new PayOrderEvent(orderIdint));
                         break;
                     case "fail" or "3":
                         break;

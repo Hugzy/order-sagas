@@ -11,7 +11,6 @@ namespace OrderingSystemWithSagas.Orders
 {
     public class OrderSaga : Saga<OrderSagaData>,
         IAmInitiatedBy<PlaceOrderEvent>,
-        IHandleMessages<PayOrderEvent>,
         IHandleMessages<PaymentSucceededEvent>,
         IHandleMessages<PaymentFailedEvent>,
         IHandleMessages<OrderReadyForExportEvent>,
@@ -28,7 +27,7 @@ namespace OrderingSystemWithSagas.Orders
         protected override void CorrelateMessages(ICorrelationConfig<OrderSagaData> config)
         {
             config.Correlate<PlaceOrderEvent>(m => m.OrderId, d => d.OrderId);
-            config.Correlate<PayOrderEvent>(m => m.OrderId, d => d.OrderId);
+            // config.Correlate<PayOrderEvent>(m => m.OrderId, d => d.OrderId);
             config.Correlate<PaymentSucceededEvent>(m => m.OrderId, d => d.OrderId);
             config.Correlate<PaymentFailedEvent>(m => m.OrderId, d => d.OrderId);
             config.Correlate<OrderReadyForExportEvent>(m => m.OrderId, d => d.OrderId);
@@ -42,41 +41,26 @@ namespace OrderingSystemWithSagas.Orders
             Data.OrderId = message.OrderId;
             Data.StartDate = DateTimeOffset.Now;
 
-            Data.Log.Push(message.Log());
+            Data.Log.Push(message);
+            SimpleLogger.Info(message);
             
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"Placing order with id {message.OrderId}");
-            Console.ResetColor();
-
             await _bus.Publish(new OrderCreatedEvent(Data.OrderId));
         }
-
-        public async Task Handle(PayOrderEvent message)
-        {
-            Data.PaymentReceived = true;
-
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"Payed for order {message.OrderId}");
-            Console.ResetColor();
-
-            await _bus.Publish(new OrderReadyForExportEvent(Data.OrderId));
-        }
-
+        
         public async Task Handle(OrderReadyForExportEvent message)
         {
             Data.ReadyToBeExported = true;
 
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"Order is ready to be exported, sending order to ERP System {Data.OrderId}");
-            Console.ResetColor();
-
+            SimpleLogger.Info(message);
+            Data.Log.Push(message);
+            
             MarkAsComplete();
         }
 
         public async Task Handle(PaymentSucceededEvent message)
         {
             Data.PaymentReceived = true;
-            Data.Log.Push(message.Log());
+            Data.Log.Push(message);
 
             await _bus.Publish(new OrderReadyForExportEvent(Data.OrderId));
         }
@@ -85,7 +69,7 @@ namespace OrderingSystemWithSagas.Orders
         {
             Data.PaymentFailed = true;
             Data.PaymentRetryCount++;
-            Data.Log.Push(message.Log($"Retry count: {Data.PaymentRetryCount}"));
+            Data.Log.Push(message);
 
             switch (Data.PaymentRetryCount)
             {
@@ -101,19 +85,18 @@ namespace OrderingSystemWithSagas.Orders
         public async Task Handle(OrderExportedEvent message)
         {
             Data.IsExported = true;
-            Data.Log.Push(message.Log());
+            Data.Log.Push(message);
             
             MarkAsComplete();
         }
 
         public async Task Handle(OrderFailedEvent message)
         {
-            Data.Log.Push(message.Log());
+            Data.Log.Push(message);
             Data.Cause = "Cause";
             
             MarkAsComplete();
         }
-        
     }
     
     public class OrderSagaData : ISagaBase
@@ -125,7 +108,7 @@ namespace OrderingSystemWithSagas.Orders
         public DateTimeOffset StartDate { get; set; }
         public DateTimeOffset UpdatedAt { get; set; }
 
-        public Stack<string> Log { get; set; }
+        public Stack<IEventBase> Log { get; set; }
         public bool PaymentReceived { get; set; }
         public bool OrderIsPending { get; set; }
         public bool IsCancelled { get; set; }
