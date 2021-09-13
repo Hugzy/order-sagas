@@ -17,10 +17,14 @@ namespace OrderingSystemWithSagas.Installers
                 typeof(PlaceOrderEvent),
                 typeof(OrderCreatedEvent),
                 typeof(PayOrderEvent),
-                typeof(OrderPaymentEvent),
+                typeof(OrderReadyForPaymentEvent),
                 typeof(OrderFailedEvent),
                 typeof(OrderReadyForExportEvent),
                 typeof(OrderExportedEvent),
+                typeof(OrderCanceledEvent),
+                typeof(PaymentFailedEvent),
+                typeof(PaymentSucceededEvent),
+                typeof(ExportOrderEvent)
             };
 
             var bus = container.Resolve<IBus>();

@@ -17,13 +17,9 @@ namespace OrderingSystemWithSagas.Orders
         
         public async Task Handle(OrderCreatedEvent message)
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Paying order: {message.OrderId}");
-            Console.ResetColor();
+            SimpleLogger.Info(message);
 
-            var orderId = message.OrderId;
-            
-            await _bus.Publish(new OrderPaymentEvent(orderId));
+            // await _bus.Publish(new OrderReadyForPaymentEvent(message.OrderId));
         }
     }
 }

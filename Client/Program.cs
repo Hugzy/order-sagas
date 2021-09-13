@@ -13,16 +13,11 @@ namespace Client
         {
             
             using var activator = new BuiltinHandlerActivator();
-
+            
             var bus = Configure.With(activator)
                 .ConfigureEndpoint(EndpointRole.Client)
                 .Start();
-
-            activator.Handle<PlaceOrderEvent>(async order =>
-            {
-                // DO Stuff
-                Console.WriteLine(order.OrderId);
-            });
+            
             PrintHelp();
             
             Console.WriteLine("Enter a command");
@@ -36,7 +31,9 @@ namespace Client
                         var randInt = new Random().Next(1000);
                         await bus.Publish(new PlaceOrderEvent(randInt));
                         break;
-                    case "pay" or "2":
+                    case "2" or "list":
+                        break;
+                    case "3" or "pay":
                         Console.WriteLine("Please enter the OrderId you'd like to pay for");
                         var orderId = Console.ReadLine();
                         var tryParse = int.TryParse(orderId, out var orderIdint);
@@ -47,11 +44,7 @@ namespace Client
                         }
                         await bus.Publish(new PayOrderEvent(orderIdint));
                         break;
-                    case "fail" or "3":
-                        break;
-                    case "export" or "4":
-                        break;
-                    case "exportready" or "rexport" or "5":
+                    case "4" or "cancel":
                         break;
                     default:
                         PrintHelp();
@@ -69,11 +62,10 @@ namespace Client
             Available commands:
 
             q or 0                          - Quit the application
-            new or 1                        - Publish a new PlaceOrder event
-            Pay or 2                        - Publish a new PayOrder event
-            fail or 3                       - Publish a new OrderFailed event
-            export or 4                     - Publish a new ExportOrder event
-            exportready or rexport or 5     - Publish a new OrderReadyToExport event
+            new or 1                        - Place a new order
+            list or 2                       - List all orders currently not completed
+            pay or 3                        - Pay for an order
+            cancel or 4                     - Cancel an order
 ");
         }
     }

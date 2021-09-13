@@ -30,7 +30,7 @@ namespace Logger
 
                 await bus.Subscribe<PlaceOrderEvent>();
                 await bus.Subscribe<OrderCreatedEvent>();
-                await bus.Subscribe<OrderPaymentEvent>();
+                await bus.Subscribe<OrderReadyForPaymentEvent>();
                 await bus.Subscribe<OrderFailedEvent>();
                 await bus.Subscribe<OrderReadyForExportEvent>();
                 await bus.Subscribe<OrderExportedEvent>();

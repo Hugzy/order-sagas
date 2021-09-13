@@ -12,6 +12,8 @@ namespace OrderingSystemWithSagas.Installers
         {
             container.RegisterHandler<OrderSaga>();
             container.RegisterHandler<PaymentReadyHandler>();
+            container.RegisterHandler<PayOrderEventHandler>();
+            container.RegisterHandler<ExportOrderHandler>();
         }
     }
 }
